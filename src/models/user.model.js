@@ -15,7 +15,7 @@ const userSchema = new Schema({
         type:String,
         required:[true,"Email is required"],
         unique:true,
-        lowecase:true,
+        lowercase:true,
         trim:true,
     },
     fullName:{
@@ -26,33 +26,54 @@ const userSchema = new Schema({
     },
     avatar:{
         type:String,
-        required:true
+        default:""
     },
-    coverImage:{
-        type:String
-    },
-    watchHistory:[
-        {
-            type:Schema.Types.ObjectId,
-            ref:"Video"
-        }
-    ],
     password:{
         type:String,
         required:[true,'Password is required']
     },
     refreshToken:{
         type:String
+    },
+    lastLogin:{
+        type:Date
+    },
+
+    // --- Profile fields (used by the Profile page) ---
+    course:{
+        type:String,
+        trim:true,
+        default:""
+    },
+    college:{
+        type:String,
+        trim:true,
+        default:""
+    },
+    graduationYear:{
+        type:Number
+    },
+    dob:{
+        type:Date
+    },
+    location:{
+        type:String,
+        trim:true,
+        default:""
+    },
+    about:{
+        type:String,
+        trim:true,
+        default:""
     }
 },{
     timestamps:true
 })
 
-userSchema.pre("save",async function(){
-    if(!this.isModified("password"))return ;
+userSchema.pre("save", async function () {
+    if (!this.isModified("password")) return;
 
-   this.password=await bcrypt.hash(this.password,10);
-   
+    this.password = await bcrypt.hash(this.password, 10);
 });
 userSchema.methods.isPasswordCorrect=async function (password){
     return await bcrypt.compare(password,this.password)
@@ -75,7 +96,7 @@ userSchema.methods.generateRefreshToken=function(){
      return jwt.sign(
         {
             _id:this._id,
-            
+
         },
         process.env.REFRESH_TOKEN_SECRET,
         {

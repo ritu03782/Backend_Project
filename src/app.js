@@ -13,9 +13,14 @@ app.use(cookieParser())
 
 //routes import;
 import userRouter from './routes/user.routes.js'
+import habitRouter from './routes/habit.routes.js'
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 //routes declaration
 app.use("/api/v1/users",userRouter)
+app.use("/api/v1/habits",habitRouter)
 
+// error handler — must be registered AFTER all routes
+app.use(errorHandler)
 
 export default app;
